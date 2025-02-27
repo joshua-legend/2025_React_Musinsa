@@ -8,54 +8,56 @@ function App() {
 
   const [inputs, setInputs] = useState([
     {
-      value: "",
       placeholder: "아이디 입력하세요",
-      inputChange: (e) => {
+      inputChange: (e, i) => {
         setInputs((prev) => {
           const newArr = [...prev];
-          newArr[0].value = e.target.value;
-          newArr[0].checkers[0].isValid = checkLength(e.target.value, 6, 20);
+          newArr[i].checkers.map((v) => {
+            v.isValid = v.validator(e.target.value);
+            return { ...v, isValid: v.validator(e.target.value) };
+          });
           return newArr;
         });
       },
-      checkers: [{ text: "6~20글자 입력", isValid: false }],
+      checkers: [{ text: "6~20글자 입력", isValid: false, validator: (value) => checkLength(value, 6, 20) }],
     },
     {
-      value: "",
       placeholder: "비밀번호 입력하세요",
-      inputChange: (e) => {
+      inputChange: (e, i) => {
         setInputs((prev) => {
           const newArr = [...prev];
-          newArr[1].value = e.target.value;
-          newArr[1].checkers[0].isValid = checkLength(e.target.value, 8, 20);
-          newArr[1].checkers[1].isValid = hasSpecial(e.target.value);
+          newArr[i].checkers.map((v) => {
+            v.isValid = v.validator(e.target.value);
+            return { ...v };
+          });
           return newArr;
         });
       },
       checkers: [
-        { text: "8~20글자 입력", isValid: false },
-        { text: "특수문자 (!@$%^*_+~)", isValid: false },
+        { text: "8~20글자 입력", isValid: false, validator: (value) => checkLength(value, 8, 20) },
+        { text: "특수문자 (!@$%^*_+~)", isValid: false, validator: (value) => hasSpecial(value) },
       ],
     },
     {
-      value: "",
       placeholder: "이메일 입력하세요",
-      inputChange: (e) => {
+      inputChange: (e, i) => {
         setInputs((prev) => {
           const newArr = [...prev];
-          newArr[2].value = e.target.value;
-          newArr[2].checkers[0].isValid = hasAt(e.target.value);
+          newArr[i].checkers.map((v) => {
+            v.isValid = v.validator(e.target.value);
+            return { ...v };
+          });
           return newArr;
         });
       },
-      checkers: [{ text: "@이 필수", isValid: false }],
+      checkers: [{ text: "@이 필수", isValid: false, validator: (value) => hasAt(value) }],
     },
   ]);
 
   return (
     <>
-      {inputs.map((v) => (
-        <InputCheckers {...v} />
+      {inputs.map((v, i) => (
+        <InputCheckers {...v} num={i} />
       ))}
       <Button isValid={inputs.every((v) => v.checkers.every((v1) => v1.isValid))} />
     </>
