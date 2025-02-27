@@ -1,32 +1,16 @@
 import { useState } from "react";
-import Checker from "./Checker";
-import Input from "./Input";
+import InputCheckers from "./InputCheckers";
 import Button from "./Button";
-import MemberShipInput from "./MemberShipInput";
-
 function App() {
-  const [idValue, setIdValue] = useState("");
-  const [pwValue, setPwValue] = useState("");
-
-  const idChange = (e) => {
-    setIdValue((prev) => e.target.value);
-  };
-
-  const pwChange = (e) => {
-    setPwValue((prev) => e.target.value);
-  };
-
   const checkLength = (value, min, max) => min <= value.length && value.length <= max;
-  const checkSpecial = (value) => [..."!@$%^*_+~"].some((v) => value.includes(v));
-
-  const isLengthIDValid = 6 <= idValue.length && idValue.length <= 20;
-  const pwLengthIDValid = 8 <= pwValue.length && pwValue.length <= 20;
-  const hasSpecial = [..."!@$%^*_+~"].some((v) => pwValue.includes(v));
+  const hasSpecial = (value) => [..."!@$%^*_+"].some((v) => value.includes(v));
+  const hasAt = (value) => value.includes("@");
 
   const [inputs, setInputs] = useState([
     {
       value: "",
-      someChange: (e) => {
+      placeholder: "아이디 입력하세요",
+      inputChange: (e) => {
         setInputs((prev) => {
           const newArr = [...prev];
           newArr[0].value = e.target.value;
@@ -34,31 +18,44 @@ function App() {
           return newArr;
         });
       },
-      placeholder: "아이디를 입력해 주세요",
-      checkers: [{ text: "6~20자 내외", isValid: false }],
+      checkers: [{ text: "6~20글자 입력", isValid: false }],
     },
     {
       value: "",
-      someChange: (e) => {
+      placeholder: "비밀번호 입력하세요",
+      inputChange: (e) => {
         setInputs((prev) => {
           const newArr = [...prev];
           newArr[1].value = e.target.value;
           newArr[1].checkers[0].isValid = checkLength(e.target.value, 8, 20);
-          newArr[1].checkers[1].isValid = checkSpecial(e.target.value);
+          newArr[1].checkers[1].isValid = hasSpecial(e.target.value);
           return newArr;
         });
       },
-      placeholder: "비밀번호를 입력해 주세요",
       checkers: [
-        { text: "8~20자 내외", isValid: false },
+        { text: "8~20글자 입력", isValid: false },
         { text: "특수문자 (!@$%^*_+~)", isValid: false },
       ],
     },
+    {
+      value: "",
+      placeholder: "이메일 입력하세요",
+      inputChange: (e) => {
+        setInputs((prev) => {
+          const newArr = [...prev];
+          newArr[2].value = e.target.value;
+          newArr[2].checkers[0].isValid = hasAt(e.target.value);
+          return newArr;
+        });
+      },
+      checkers: [{ text: "@이 필수", isValid: false }],
+    },
   ]);
+
   return (
     <>
       {inputs.map((v) => (
-        <MemberShipInput {...v} />
+        <InputCheckers {...v} />
       ))}
       <Button isValid={inputs.every((v) => v.checkers.every((v1) => v1.isValid))} />
     </>
