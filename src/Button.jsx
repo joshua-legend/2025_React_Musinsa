@@ -1,22 +1,7 @@
 const Button = (props) => {
-  const { text, isAllNecessarychecked } = props;
-  return (
-    <div
-      onClick={() => {
-        isAllNecessarychecked ? alert("통과") : alert("필수 누르셈 ㅅㄱ");
-      }}
-      style={{
-        padding: "10px",
-        width: "500px",
-        backgroundColor: isAllNecessarychecked ? "black" : "#efefef",
-        color: isAllNecessarychecked ? "white" : "grey",
-        textAlign: "center",
-        borderRadius: "5px",
-      }}
-    >
-      {text}
-    </div>
-  );
+  const { isValid } = props;
+
+  return <div style={{ backgroundColor: isValid ? "black" : "grey", color: isValid ? "white" : "#efefef", width: "300px", padding: "10px 0", textAlign: "center", borderRadius: "30px" }}>가입</div>;
 };
 
 export default Button;

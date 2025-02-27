@@ -1,36 +1,73 @@
 import { useState } from "react";
-import Agreement from "./Agreement";
+import Checker from "./Checker";
+import Input from "./Input";
 import Button from "./Button";
+import MemberShipInput from "./MemberShipInput";
 
 function App() {
-  const [agreements, setAgreements] = useState([
-    { contents: "만 14세 이상입니다.", isNecessary: true, isChecked: false },
-    { contents: "무신사, 무신사 스토어 이용 약관", isNecessary: true, isChecked: false },
-    { contents: "마케팅 목적의 개인정보 수집 및 이용 동의", isNecessary: false, isChecked: false },
-    { contents: "광고성 정보 수신 동의", isNecessary: false, isChecked: false },
-  ]);
+  const [idValue, setIdValue] = useState("");
+  const [pwValue, setPwValue] = useState("");
 
-  const click = (i) => {
-    setAgreements((prev) => {
-      const newArr = [...prev];
-      newArr[i].isChecked = !newArr[i].isChecked;
-      return newArr;
-    });
+  const idChange = (e) => {
+    setIdValue((prev) => e.target.value);
   };
 
+  const pwChange = (e) => {
+    setPwValue((prev) => e.target.value);
+  };
+
+  const checkLength = (value, min, max) => min <= value.length && value.length <= max;
+  const checkSpecial = (value) => [..."!@$%^*_+~"].some((v) => value.includes(v));
+
+  const isLengthIDValid = 6 <= idValue.length && idValue.length <= 20;
+  const pwLengthIDValid = 8 <= pwValue.length && pwValue.length <= 20;
+  const hasSpecial = [..."!@$%^*_+~"].some((v) => pwValue.includes(v));
+
+  const [inputs, setInputs] = useState([
+    {
+      value: "",
+      someChange: (e) => {
+        setInputs((prev) => {
+          const newArr = [...prev];
+          newArr[0].value = e.target.value;
+          newArr[0].checkers[0].isValid = checkLength(e.target.value, 6, 20);
+          return newArr;
+        });
+      },
+      placeholder: "아이디를 입력해 주세요",
+      checkers: [{ text: "6~20자 내외", isValid: false }],
+    },
+    {
+      value: "",
+      someChange: (e) => {
+        setInputs((prev) => {
+          const newArr = [...prev];
+          newArr[1].value = e.target.value;
+          newArr[1].checkers[0].isValid = checkLength(e.target.value, 8, 20);
+          newArr[1].checkers[1].isValid = checkSpecial(e.target.value);
+          return newArr;
+        });
+      },
+      placeholder: "비밀번호를 입력해 주세요",
+      checkers: [
+        { text: "8~20자 내외", isValid: false },
+        { text: "특수문자 (!@$%^*_+~)", isValid: false },
+      ],
+    },
+  ]);
   return (
     <>
-      <section style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-        {agreements.map((v, i) => (
-          <Agreement
-            {...v}
-            a={() => {
-              click(i);
-            }}
-          />
-        ))}
-      </section>
-      <Button isAllNecessarychecked={agreements.filter((v) => v.isNecessary).every((v) => v.isChecked)} text={"동의하고 본인인증하기"} />
+      {/* <Input change={idChange} placeholder={"아이디를 입력해 주세요"} />
+      <Checker text={"6~20자 내외"} isValid={isLengthIDValid} />
+
+      <Input change={pwChange} placeholder={"비밀번호를 입력해 주세요"} />
+      <Checker text={"8~20자 내외"} isValid={pwLengthIDValid} />
+      <Checker text={"특수문자 (!@$%^*_+~)"} isValid={hasSpecial} /> */}
+
+      {inputs.map((v, i) => (
+        <MemberShipInput key={i} {...v} />
+      ))}
+      <Button isValid={inputs.every((v) => v.checkers.every((v1) => v1.isValid))} />
     </>
   );
 }
