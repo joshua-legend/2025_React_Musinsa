@@ -57,15 +57,8 @@ function App() {
   ]);
   return (
     <>
-      {/* <Input change={idChange} placeholder={"아이디를 입력해 주세요"} />
-      <Checker text={"6~20자 내외"} isValid={isLengthIDValid} />
-
-      <Input change={pwChange} placeholder={"비밀번호를 입력해 주세요"} />
-      <Checker text={"8~20자 내외"} isValid={pwLengthIDValid} />
-      <Checker text={"특수문자 (!@$%^*_+~)"} isValid={hasSpecial} /> */}
-
-      {inputs.map((v, i) => (
-        <MemberShipInput key={i} {...v} />
+      {inputs.map((v) => (
+        <MemberShipInput {...v} />
       ))}
       <Button isValid={inputs.every((v) => v.checkers.every((v1) => v1.isValid))} />
     </>
